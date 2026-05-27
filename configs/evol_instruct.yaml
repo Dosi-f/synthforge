@@ -1,0 +1,69 @@
+# SynthForge — Evol-Instruct Generation Config
+
+pipeline:
+  name: "evol_instruct"
+  description: "Iterative instruction evolution following WizardLM approach"
+  version: "0.1.0"
+
+generation:
+  backend: "openai"
+  model: "gpt-4o"
+
+  prompt_template: |
+    You are generating training data for language models.
+
+    Create {num_samples} instruction-following examples for the following domain.
+
+    Domain: {domain}
+    Complexity: {complexity}
+    Additional constraints: {constraints}
+
+    Output a JSON array where each item has:
+    - "instruction": the task
+    - "response": the ideal answer
+    - "metadata": {{"complexity": "{complexity}", "domain": "{domain}"}}
+
+  inputs:
+    - domain: "coding"
+      complexity: "simple"
+      num_samples: 5
+      constraints: "Single-function problems"
+    - domain: "coding"
+      complexity: "medium"
+      num_samples: 5
+      constraints: "Multi-step algorithm design"
+    - domain: "coding"
+      complexity: "complex"
+      num_samples: 3
+      constraints: "System design with trade-off analysis"
+    - domain: "writing"
+      complexity: "medium"
+      num_samples: 5
+      constraints: "Technical documentation style"
+    - domain: "reasoning"
+      complexity: "complex"
+      num_samples: 5
+      constraints: "Multi-step logical deduction problems"
+    - domain: "creative"
+      complexity: "simple"
+      num_samples: 5
+      constraints: "Brainstorming and ideation tasks"
+
+  num_samples_per_input: 1
+
+filters:
+  - type: "length"
+    min_chars: 80
+    max_chars: 8000
+
+quality:
+  scoring: "reward_model"
+
+diversity:
+  enabled: true
+  model: "all-MiniLM-L6-v2"
+  threshold: 0.85
+
+output:
+  format: "jsonl"
+  path: "outputs/evol_instruct_dataset.jsonl"
