@@ -1,0 +1,48 @@
+# SynthForge Docker Compose
+# For local development with GPU support.
+
+version: "3.8"
+
+services:
+  synthforge:
+    build: .
+    image: synthforge:latest
+    container_name: synthforge
+    volumes:
+      - ./outputs:/app/outputs
+      - ./configs:/app/configs
+      - ./.cache:/app/.cache
+      - ./.env:/app/.env:ro
+    environment:
+      - ROCR_VISIBLE_DEVICES=${ROCR_VISIBLE_DEVICES:-0}
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: amd
+              count: ${GPU_COUNT:-1}
+              capabilities: [gpu]
+    # Override entrypoint for interactive use:
+    # entrypoint: ["/bin/bash"]
+
+  # Optional: Run vLLM server alongside SynthForge
+  # Uncomment if you want to self-host the generation backend
+  # vllm:
+  #   image: vllm/vllm-openai:latest
+  #   container_name: synthforge-vllm
+  #   ports:
+  #     - "8000:8000"
+  #   volumes:
+  #     - ~/.cache/huggingface:/root/.cache/huggingface
+  #   command: >
+  #     --model meta-llama/Llama-3.1-8B-Instruct
+  #     --tensor-parallel-size 1
+  #     --gpu-memory-utilization 0.90
+  #     --max-model-len 8192
+  #   deploy:
+  #     resources:
+  #       reservations:
+  #         devices:
+  #           - driver: amd
+  #             count: 1
+  #             capabilities: [gpu]

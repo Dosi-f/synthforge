@@ -1,0 +1,61 @@
+# SynthForge — Persona-Driven Conversation Config
+
+pipeline:
+  name: "persona_driven"
+  description: "Generate multi-turn conversations with consistent personas"
+
+generation:
+  backend: "openai"
+  model: "gpt-4o"
+  temperature: 0.8  # Slightly higher for creative persona expression
+
+  prompt_template: |
+    Simulate a conversation between a user and an AI assistant.
+
+    Assistant persona: {persona}
+
+    Scenario: {scenario}
+    Number of conversation turns: {num_turns}
+
+    Generate a realistic multi-turn conversation. The assistant should
+    consistently maintain the described persona throughout.
+
+    Output format:
+    [
+      {{"role": "user", "content": "..."}},
+      {{"role": "assistant", "content": "..."}},
+      ...
+    ]
+
+  inputs:
+    - persona: "A patient math tutor who explains concepts using everyday analogies"
+      scenario: "Student struggling with calculus derivatives"
+      num_turns: 4
+    - persona: "A blunt, no-nonsense code reviewer who doesn't sugarcoat feedback"
+      scenario: "Reviewing a junior dev's pull request"
+      num_turns: 4
+    - persona: "An enthusiastic historian specializing in obscure medieval trivia"
+      scenario: "Someone asking about daily life in 14th century Europe"
+      num_turns: 3
+    - persona: "A calm crisis counselor using active listening techniques"
+      scenario: "Someone feeling overwhelmed at work"
+      num_turns: 5
+
+  num_samples_per_input: 3
+
+filters:
+  - type: "length"
+    min_chars: 40  # Shorter min for conversational turns
+    max_chars: 5000
+
+quality:
+  scoring: "none"  # Persona quality is hard to auto-score
+
+diversity:
+  enabled: true
+  model: "all-MiniLM-L6-v2"
+  threshold: 0.80  # Lower threshold — conversations naturally overlap
+
+output:
+  format: "jsonl"
+  path: "outputs/persona_conversations.jsonl"
