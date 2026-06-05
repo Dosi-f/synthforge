@@ -1,0 +1,60 @@
+# SynthForge — Default Generation Config
+
+pipeline:
+  name: "basic_generation"
+  description: "Simple single-turn instruction generation"
+
+generation:
+  backend: "openai"
+  model: "gpt-4o-mini"
+  temperature: 0.7
+  max_tokens: 2048
+
+  # Template with {placeholders}
+  prompt_template: |
+    Generate a high-quality instruction-following example.
+
+    Topic: {topic}
+    Difficulty: {difficulty}
+
+    Output a JSON object with fields:
+    - instruction: clear task description
+    - response: thorough, accurate answer
+
+  # Input variations
+  inputs:
+    - topic: "Python programming"
+      difficulty: "beginner"
+    - topic: "Python programming"
+      difficulty: "intermediate"
+    - topic: "Python programming"
+      difficulty: "advanced"
+    - topic: "machine learning"
+      difficulty: "beginner"
+    - topic: "machine learning"
+      difficulty: "intermediate"
+    - topic: "data structures"
+      difficulty: "intermediate"
+    - topic: "web development"
+      difficulty: "beginner"
+    - topic: "system design"
+      difficulty: "advanced"
+
+  num_samples_per_input: 5
+
+filters:
+  - type: "length"
+    min_chars: 100
+    max_chars: 10000
+
+quality:
+  scoring: "none"  # "reward_model" | "heuristic" | "none"
+
+diversity:
+  enabled: false
+  model: "all-MiniLM-L6-v2"
+  threshold: 0.85
+
+output:
+  format: "jsonl"
+  path: "outputs/default_dataset.jsonl"
