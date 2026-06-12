@@ -89,3 +89,8 @@ pip install synthforge[vllm]
 Works. I've used it to generate ~50k samples for fine-tuning. The quality filtering is the most useful part — raw LLM output is surprisingly noisy.
 
 Apache 2.0 License.
+
+
+## Troubleshooting
+**Q: Getting OOM errors?**
+A: Reduce batch size or enable gradient checkpointing.
