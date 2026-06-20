@@ -36,3 +36,8 @@ python synthforge.py filter --input raw_generations.jsonl --output filtered.json
 
 - `examples/raw_generations.jsonl` — what raw output looks like
 - `examples/filtered_dataset.jsonl` — after filtering
+
+
+## Hardware Tested
+- AMD RX 7800 XT (RDNA3)
+- AMD RX 7900 XTX (RDNA3)
